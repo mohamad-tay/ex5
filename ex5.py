@@ -78,5 +78,26 @@ def enrollment_numbers(input_json_path, output_file_path):
 
     
 
+def courses_for_lecturers(json_directory_path, output_json_path):
+    lecturerAndCourses ={}
+    for file in os.listdir(json_directory_path):
+        filePath = os.path.join(json_directory_path,file)
+        fileFormat = os.path.splitext(filePath)
+        if os.path.isfile(filePath) and fileFormat[1]=='.json':
+            with open(filePath,'r') as dataFile:
+                loadedDict=json.load(dataFile)  
+                for courseAndLecturersDict in loadedDict.values():
+                    for lecturer in courseAndLecturersDict["lecturers"]:
+                        if lecturer in lecturerAndCourses and lecturerAndCourses[lecturer].count(courseAndLecturersDict["course_name"])==0:
+                            lecturerAndCourses[lecturer].append(courseAndLecturersDict["course_name"])   
+                        elif lecturer in lecturerAndCourses and lecturerAndCourses[lecturer].count(courseAndLecturersDict["course_name"])!=0:
+                            continue
+                        else  :
+                            lecturerAndCourses[lecturer]=[courseAndLecturersDict["course_name"]] 
+    with open(output_json_path,'w') as f:
+        json.dump(lecturerAndCourses,f, indent=4)
+    
+
+
 
 
